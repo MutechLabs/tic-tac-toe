@@ -1,56 +1,56 @@
 import { useState } from "react";
 
 function useHover() {
-  const [hovering, setHovering] = useState(false)
+  const [hovering, setHovering] = useState(false);
   const onHoverProps = {
     onMouseEnter: () => setHovering(true),
     onMouseLeave: () => setHovering(false),
-  }
-  return [hovering, onHoverProps]
+  };
+  return [hovering, onHoverProps];
 }
 
-function Square({ emptySpace,cell, itsAWinner, value, onSquareClick, xIsNext }) {
-  const [buttonAIsHovering, buttonAHoverProps] = useHover()
+function Square({
+  emptySpace,
+  cell,
+  itsAWinner,
+  value,
+  onSquareClick,
+  xIsNext,
+}) {
+  const [buttonAIsHovering, buttonAHoverProps] = useHover();
 
   let currentClass = "label";
 
-  if(value === null && buttonAIsHovering && xIsNext && emptySpace){
+  if (value === null && buttonAIsHovering && xIsNext && emptySpace) {
     currentClass = "mark--x-hover";
-  } else if(value === null && buttonAIsHovering && !xIsNext && emptySpace){
+  } else if (value === null && buttonAIsHovering && !xIsNext && emptySpace) {
     currentClass = "mark--o-hover";
-  } else if(value === 'mark-x'){
+  } else if (value === "mark-x") {
     currentClass = "mark--x";
-  }
-  else if(value === 'mark-o'){
+  } else if (value === "mark-o") {
     currentClass = "mark--o";
   }
   return (
     <>
-      <div onClick={onSquareClick} className={"cell cell--" + cell} {...buttonAHoverProps}>
-        { 
-        xIsNext && buttonAIsHovering && value === null && emptySpace ? <>
-        <label className="mark--x-1-hover" ></label>
-        <label className="mark--x-2-hover" ></label></> :
-        value === "mark-x" ? <>
-        <label className="mark--x-1" ></label>
-        <label className="mark--x-2" ></label>
-        </> : 
-        <label className={currentClass} ></label>
-      }
-      </div>
-{/* 
-      <button
-        className={
-          itsAWinner
-            ? "winner-square"
-            : value != null
-            ? "square-fill"
-            : "square"
-        }
+      <div
         onClick={onSquareClick}
+        className={"cell cell--" + cell}
+        {...buttonAHoverProps}
       >
-        {value}
-      </button> */}
+        {xIsNext && buttonAIsHovering && value === null && emptySpace ? (
+          <>
+            <label className="mark--x-1-hover"></label>
+            <label className="mark--x-2-hover"></label>
+          </>
+        ) : value === "mark-x" ? (
+          <>
+            <label className="mark--x-1"></label>
+            <label className="mark--x-2"></label>
+          </>
+        ) : (
+          <label className={currentClass}></label>
+        )}
+      </div>
     </>
   );
 }
@@ -103,19 +103,15 @@ function Board({ xIsNext, squares, onPlay }) {
           value={squares[i * 3 + j]}
           onSquareClick={() => handleClick(i * 3 + j)}
           xIsNext={xIsNext}
-          emptySpace = {emptySpace}
+          emptySpace={emptySpace}
         />
       );
     }
-   row.push(columns);
+    row.push(columns);
     boardRows.push(row);
   }
 
-  return (
-    <>
-     {boardRows}
-    </>
-  );
+  return <>{boardRows}</>;
 }
 
 export default function Game() {
@@ -167,10 +163,12 @@ export default function Game() {
   }
 
   return (
-    <div className="board">
+    <form>
+      <h1 class="title">React tic-tac-toe game!</h1>
+      <div className="board">
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
-      
       </div>
+    </form>
   );
 }
 
