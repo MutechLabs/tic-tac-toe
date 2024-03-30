@@ -1,13 +1,57 @@
 import { useState } from "react";
 
-function Square({ itsAWinner, value, onSquareClick }) {
+function useHover() {
+  const [hovering, setHovering] = useState(false)
+  const onHoverProps = {
+    onMouseEnter: () => setHovering(true),
+    onMouseLeave: () => setHovering(false),
+  }
+  return [hovering, onHoverProps]
+}
+
+function Square({ emptySpace,cell, itsAWinner, value, onSquareClick, xIsNext }) {
+  const [buttonAIsHovering, buttonAHoverProps] = useHover()
+
+  let currentClass = "label";
+
+  if(value === null && buttonAIsHovering && xIsNext && emptySpace){
+    currentClass = "mark--x-hover";
+  } else if(value === null && buttonAIsHovering && !xIsNext && emptySpace){
+    currentClass = "mark--o-hover";
+  } else if(value === 'mark-x'){
+    currentClass = "mark--x";
+  }
+  else if(value === 'mark-o'){
+    currentClass = "mark--o";
+  }
   return (
-    <button
-      className={itsAWinner ? "winner-square" : "square"}
-      onClick={onSquareClick}
-    >
-      {value}
-    </button>
+    <>
+      <div onClick={onSquareClick} className={"cell cell--" + cell} {...buttonAHoverProps}>
+        { 
+        xIsNext && buttonAIsHovering && value === null && emptySpace ? <>
+        <label className="mark--x-1-hover" ></label>
+        <label className="mark--x-2-hover" ></label></> :
+        value === "mark-x" ? <>
+        <label className="mark--x-1" ></label>
+        <label className="mark--x-2" ></label>
+        </> : 
+        <label className={currentClass} ></label>
+      }
+      </div>
+{/* 
+      <button
+        className={
+          itsAWinner
+            ? "winner-square"
+            : value != null
+            ? "square-fill"
+            : "square"
+        }
+        onClick={onSquareClick}
+      >
+        {value}
+      </button> */}
+    </>
   );
 }
 
@@ -18,9 +62,9 @@ function Board({ xIsNext, squares, onPlay }) {
     }
     const nextSquares = squares.slice();
     if (xIsNext) {
-      nextSquares[i] = "X";
+      nextSquares[i] = "mark-x";
     } else {
-      nextSquares[i] = "O";
+      nextSquares[i] = "mark-o";
     }
     onPlay(nextSquares);
   }
@@ -47,33 +91,29 @@ function Board({ xIsNext, squares, onPlay }) {
   let boardRows = [];
 
   for (let i = 0; i < 3; i++) {
-    let row;
+    let row = [];
     let columns = [];
 
     for (let j = 0; j < 3; j++) {
       columns.push(
         <Square
           key={"square" + i * 3 + j}
+          cell={i * 3 + j + 1}
           itsAWinner={winner && winner.includes(i * 3 + j)}
           value={squares[i * 3 + j]}
           onSquareClick={() => handleClick(i * 3 + j)}
+          xIsNext={xIsNext}
+          emptySpace = {emptySpace}
         />
       );
     }
-    row = (
-      <div key={"board-row-" + i} className="board-row">
-        {columns}
-      </div>
-    );
+   row.push(columns);
     boardRows.push(row);
   }
 
   return (
     <>
-      <div key="status" className="status">
-        {status}
-      </div>
-      {boardRows}
+     {boardRows}
     </>
   );
 }
@@ -127,25 +167,10 @@ export default function Game() {
   }
 
   return (
-    <div className="game">
-      <div className="game-board">
+    <div className="board">
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+      
       </div>
-      <div className="game-info">
-        {isHistoryReverse ? (
-          <ol reversed>{isHistoryReverse ? moves.reverse() : moves}</ol>
-        ) : (
-          <ol>{moves}</ol>
-        )}
-      </div>
-      <div className="game-info">
-        <button onClick={reverse}>
-          {isHistoryReverse === true
-            ? "Show asceding history"
-            : "Show descending history"}
-        </button>
-      </div>
-    </div>
   );
 }
 
