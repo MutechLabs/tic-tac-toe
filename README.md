@@ -4,10 +4,13 @@ Simple quick start with React
 
 ## Credits
 
+### `CSS`
 CSS Style: https://codepen.io/kalabasa/pen/oVMOZK
-OnMouse Over function from StackOverflow: 
-post: https://stackoverflow.com/questions/43920338/react-js-onmouseover-changing-the-text
-user answer: https://stackoverflow.com/users/3458162/arye-eidelman
+
+### `OnMouse Over`
+https://stackoverflow.com/questions/43920338/react-js-onmouseover-changing-the-text\
+
+https://stackoverflow.com/users/3458162/arye-eidelman
 
 ### `npm start`
 
