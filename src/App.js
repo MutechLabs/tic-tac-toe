@@ -33,6 +33,7 @@ function Square({
   return (
     <>
       <div
+      style={ {backgroundColor: itsAWinner ? "#9EB8D9" : null}}
         onClick={onSquareClick}
         className={"cell cell--" + cell}
         {...buttonAHoverProps}
@@ -55,7 +56,7 @@ function Square({
   );
 }
 
-function Board({ xIsNext, squares, onPlay }) {
+function Board({ xIsNext, squares, onPlay, onStatusChange}) {
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]) {
       return;
@@ -70,10 +71,9 @@ function Board({ xIsNext, squares, onPlay }) {
   }
 
   const winner = calculateWinner(squares);
-  let status;
   let emptySpace = false;
   if (winner) {
-    status = "Winner: " + squares[winner[0]];
+    // status = "You win!";
   } else {
     squares.forEach((square) => {
       if (square === null) {
@@ -81,12 +81,14 @@ function Board({ xIsNext, squares, onPlay }) {
       }
     });
 
-    if (emptySpace) {
-      status = "Next player: " + (xIsNext ? "X" : "O");
-    } else {
-      status = "It's a DRAW!!";
-    }
+    // if (emptySpace) {
+    //   status = "Let's play!";
+    // } else {
+    //   status = "It's a DRAW!!";
+    // }
   }
+
+  onStatusChange();
 
   let boardRows = [];
 
@@ -120,6 +122,8 @@ export default function Game() {
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
   const [isHistoryReverse, setIsHistoryReverse] = useState(false);
+  const [status, setStatus] = useState("React tic-tac-toe game!");
+
 
   function handlePlay(nextSquares) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
@@ -164,9 +168,9 @@ export default function Game() {
 
   return (
     <form>
-      <h1 class="title">React tic-tac-toe game!</h1>
+      <h1 class="title">{status}</h1>
       <div className="board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} onStatusChange={() => setStatus(handleStatus(currentSquares))}/>
       </div>
     </form>
   );
@@ -208,4 +212,28 @@ function calculateWinner(squares) {
     }
   }
   return null;
+}
+
+function handleStatus(squares){
+  const winner = calculateWinner(squares);
+  let status;
+  let emptySpace = false;
+  if (winner) {
+    status = "You win!";
+  } else {
+    squares.forEach((square) => {
+      if (square === null) {
+        emptySpace = true;
+      }
+    });
+
+    if (emptySpace) {
+      status = "Let's play!";
+    } else {
+      status = "It's a DRAW!!";
+    }
+  }
+
+  return status;
+
 }
